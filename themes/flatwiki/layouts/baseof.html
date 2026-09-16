@@ -7,10 +7,10 @@
 {{- with .Description }}
 <meta name="description" content="{{ . }}">
 {{- end }}
-{{- /* @import hides the stylesheet from Netscape 4, whose CSS support breaks layouts. */}}
+{{- /* @import hides the stylesheet from Netscape 4, whose CSS support breaks layouts. ?v= changes every build so browsers fetch fresh styles after a deploy. */}}
 <style type="text/css">
 {{- range site.Params.stylesheets }}
-@import url("{{ . }}");
+@import url("{{ . }}?v={{ now.Unix }}");
 {{- end }}
 </style>
 </head>
