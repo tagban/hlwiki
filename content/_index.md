@@ -13,8 +13,7 @@ Welcome to the Hotline Wiki
 
 </center>
 
-\
-Hotline Wiki recently had a large amount of spam. As such its been fully locked down. To request access you can either go thru our discord and reach out to Tagban, or email for access with the subject line "HL WIKI ACCESS" to [mailto:requestacct@hlwiki.com](mailto:requestacct@hlwiki.com). Will need your email address, Username Preferred, and a dummy password (You can change after you login).
+**Want to help?** Join our [Discord server](https://discord.gg/vdxJHwzfrN) to get editing access. You can also suggest a change right now with the **Edit on GitHub** link at the bottom of any page. Every edit is reviewed before it goes live, which keeps the spam out.
 
 <img src="/images/800px-Hotline.png" width="228" alt="800px-Hotline" /> We are looking for individuals that currently reside on Hotline, so please step forward and assist us in this effort. Hosting for downloads will be provided offsite by contacting Tagban. We are also looking to build a nice sized database of **all** possible clients, servers and trackers, as well as the source code that goes with them, working on moving Hotline forward into a new era, and to encourage more developers to step forward and work on related projects.
 
