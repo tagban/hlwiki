@@ -1,0 +1,8 @@
+{{- /* Page list for the Discord editor: title and file path of every page. */ -}}
+{{- $pages := slice }}
+{{- range $p := site.Pages }}
+  {{- with $p.File }}
+    {{- $pages = $pages | append (dict "title" $p.Title "path" (replace .Path "\\" "/") "url" $p.RelPermalink "special" (isset $p.Params "layout")) }}
+  {{- end }}
+{{- end }}
+{{- jsonify $pages }}

@@ -74,3 +74,7 @@ jobs:
             --filter 'P /ik0ns/***' --filter 'P /icons/***' --filter 'P /banners/***' \
             -e "$ssh_cmd" \
             public/ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
+          # The Discord editor (PHP). Its secrets live outside the website in ~/editor-config/.
+          rsync -rlvz --delete --chmod=D755,F644 \
+            -e "$ssh_cmd" \
+            editor/ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/editor/"

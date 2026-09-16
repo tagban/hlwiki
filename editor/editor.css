@@ -1,0 +1,45 @@
+/* Editor pages reuse the wiki's stylesheets; these rules add the form layout. */
+
+#editor { padding: 20px 25px; background: #fff; border: 1px solid #999; border-top: 0; }
+#editor h1.title { color: #333366; border-bottom: 1px solid #9ada92; font-size: 1.8em; font-weight: normal; margin: 0 0 .6em; }
+#topbar .who img { vertical-align: middle; border-radius: 50%; }
+form.inline { display: inline; }
+.hidden-default { position: absolute; left: -9999px; }
+
+.editform label { display: block; margin: 1em 0 .3em; font-weight: bold; }
+.editform input[type="text"], .editform textarea {
+  box-sizing: border-box; width: 100%; padding: 6px 8px;
+  font: inherit; border: 1px solid #999; border-radius: 3px; background: #fff;
+}
+.editform textarea { font-family: Monaco, Menlo, "Courier New", monospace; font-size: 13px; line-height: 1.45; resize: vertical; }
+.editform fieldset.images { margin: 1em 0; padding: 8px 12px; border: 1px solid #ccc; }
+.editform fieldset.images ul { margin: 0 0 .5em; padding: 0; list-style: none; }
+.editform fieldset.images li { margin: 4px 0; }
+.editform fieldset.images img { vertical-align: middle; border: 1px solid #ccc; }
+.editform details { margin: 1em 0; }
+.editform details summary { cursor: pointer; font-weight: bold; }
+.editform .actions { margin-top: 1.2em; }
+
+button, .button {
+  display: inline-block; padding: 6px 14px; font: inherit; font-weight: bold; color: #333366;
+  background: #eef6ec; border: 1px solid #7fb877; border-radius: 3px; cursor: pointer; text-decoration: none;
+}
+button.primary, .button { color: #fff; background: #3f7d38; border-color: #2f6229; }
+button:hover, .button:hover { filter: brightness(1.08); }
+button:focus-visible, .button:focus-visible { outline: 2px solid #1a5fd0; outline-offset: 2px; }
+.linkbutton { padding: 0; font-weight: bold; color: #333366; background: none; border: 0; text-decoration: underline; }
+
+.note { color: #555; font-size: 90%; }
+.notice { padding: 8px 12px; background: #eef6ec; border: 1px solid #9ada92; }
+.errors { padding: 4px 12px; color: #7a1010; background: #fdecec; border: 1px solid #e3a3a3; }
+.errors p { margin: .5em 0; }
+.preview { margin-bottom: 1.5em; padding: 10px 16px; border: 2px dashed #9ada92; }
+.preview-label { margin: 0 0 .5em; font-size: 90%; font-weight: bold; color: #3f7d38; }
+.preview img { max-width: 100%; }
+.pagelist { columns: 2; }
+
+@media (max-width: 760px) {
+  body { padding: 0; }
+  #editor { padding: 14px 16px; border-left: 0; border-right: 0; }
+  .pagelist { columns: 1; }
+}

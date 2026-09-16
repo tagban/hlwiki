@@ -6,6 +6,9 @@ enableGitInfo = true
 disableKinds = ["rss"]
 disableHugoGeneratorInject = true
 
+[outputs]
+  home = ["html", "json"]
+
 [taxonomies]
   category = "categories"
 

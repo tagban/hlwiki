@@ -11,8 +11,10 @@ The site works in any browser, including classic Mac OS browsers over plain HTTP
 - **On GitHub:** click **Edit on GitHub** at the bottom of any page. GitHub opens
   the file and offers to create a pull request. When it's merged, the site
   updates within a couple of minutes.
-- **With Discord:** coming soon. Members of the Hotline Wiki Discord server will
-  be able to edit from the site itself.
+- **With Discord:** members of the Hotline Wiki Discord server who have the
+  **Wiki Contributor** role can click **Edit with Discord** on any page, or go to
+  https://hlwiki.com/editor/. Their edit (and any images they upload) arrives as a
+  pull request, credited to their Discord name, for a maintainer to approve.
 
 ### Page format
 
@@ -88,3 +90,28 @@ Then open http://localhost:1313.
 converted it. It was a one-time import and doesn't need to run again. Old links
 such as `/index.php/Main_Page` redirect to the new pages through
 `static/.htaccess`.
+
+## Discord editor setup (one time)
+
+The editor is a small PHP app in `editor/`, deployed to `hlwiki.com/editor/`.
+It needs three things, stored in `~/editor-config/hlwiki.com.php` on the server
+(outside the website folder). Start from `editor/config.sample.php`.
+
+1. **A Discord application.** At https://discord.com/developers/applications,
+   create an application, open **OAuth2**, copy the **Client ID** and **Client
+   Secret**, and add the redirect `https://hlwiki.com/editor/callback.php`.
+   No bot is needed.
+2. **The server and role IDs.** In Discord, turn on **Settings → Advanced →
+   Developer Mode**. Right-click the server icon and **Copy Server ID**, then
+   in **Server Settings → Roles** right-click **Wiki Contributor** and
+   **Copy Role ID**.
+3. **A GitHub token.** At https://github.com/settings/personal-access-tokens/new,
+   create a fine-grained token for **only** `tagban/hlwiki` with **Contents** and
+   **Pull requests** set to **Read and write**. Renew it before it expires.
+
+Then set `editorURL = "https://hlwiki.com/editor/edit.php"` in `hugo.toml` so every
+page shows an **Edit with Discord** link.
+
+To try the editor on your computer without Discord or GitHub writes, add
+`'dev_user' => [...]` and `'dry_run' => true` to a local config and run it with
+`php -S` (see `editor/config.sample.php`).

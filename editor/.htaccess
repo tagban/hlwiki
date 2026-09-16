@@ -1,0 +1,8 @@
+# The editor needs Discord login, so it is HTTPS-only (the rest of the wiki is not).
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+# Code and config templates are never served directly.
+RewriteRule ^(src/|config\.sample\.php) - [F,L]
