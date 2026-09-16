@@ -26,6 +26,11 @@ function config(): array
             exit('The editor is not set up yet.');
         }
         $config = require $path;
+        $unset = fn ($v) => $v === '' || str_starts_with((string) $v, 'PASTE_');
+        if (PHP_SAPI !== 'cli-server' && ($unset($config['discord']['client_secret']) || $unset($config['github']['token']))) {
+            http_response_code(503);
+            exit('The editor is not set up yet.');
+        }
         $config['data_dir'] = $config['data_dir'] ?? dirname($path) . '/' . basename($siteDir) . '-data';
         $config['site_url'] = rtrim($config['site_url'], '/');
     }

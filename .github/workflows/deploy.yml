@@ -70,7 +70,7 @@ jobs:
           # are excluded. ik0ns/, icons/ and banners/ are uploaded from the repo, but extra files
           # already on the server are protected from deletion: Hotline clients load icons from there.
           rsync -rlvz --delete --chmod=D755,F644 \
-            --exclude /files/ --exclude /HotlineFiles/ --exclude /editor/ --exclude /.well-known/ \
+            --exclude /files/ --exclude /HotlineFiles/ --exclude /editor/ --exclude /.well-known/ --exclude /.dh-diag \
             --filter 'P /ik0ns/***' --filter 'P /icons/***' --filter 'P /banners/***' \
             -e "$ssh_cmd" \
             public/ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
