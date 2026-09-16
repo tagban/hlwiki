@@ -53,6 +53,9 @@ Client and server downloads are too large for git, so they live only on the web
 server in `files/`. The deploy never touches that folder. To add one, upload it
 with SFTP, then add its size to `data/files.json` so the page can show it.
 
+The `HotlineFiles/` archive (clients, servers, trackers, tools, source code) also
+lives only on the server, and deploys never touch it either.
+
 ## Previewing on your computer
 
 ```bash
@@ -66,7 +69,7 @@ Then open http://localhost:1313.
 
 1. In the DreamHost panel, make the site's user an **SSH** user (not SFTP-only).
 2. Move the old MediaWiki files out of the site folder. The deploy **deletes
-   anything** in the target folder except `files/`, `editor/`, `.well-known/`
+   anything** in the target folder except `files/`, `HotlineFiles/`, `editor/`, `.well-known/`
    and the icon folders, and it refuses to run while `LocalSettings.php` is there.
 3. Create an SSH key pair for deploys and add the public key to
    `~/.ssh/authorized_keys` on DreamHost.
