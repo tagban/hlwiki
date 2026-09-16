@@ -39,6 +39,14 @@ Normal **Markdown** here. Link to other pages like [Servers](/servers/).
 The sidebar is `content/sidebar/index.md`, and the Hotline Protocol link box is
 `content/navboxes/protocol/index.md`. Edit them like any other page.
 
+## Icons
+
+`static/ik0ns/` is the complete community icon archive (6,525 icons), and
+`static/icons/` is the older, smaller official set. Hotline clients load icons
+straight from `http://hlwiki.com/ik0ns/<number>.png`, so these URLs must never
+change. To add icons, put the PNG files in `static/ik0ns/`. Deploys upload new
+icons but never delete icons that are already on the server.
+
 ## Downloads
 
 Client and server downloads are too large for git, so they live only on the web
@@ -58,7 +66,8 @@ Then open http://localhost:1313.
 
 1. In the DreamHost panel, make the site's user an **SSH** user (not SFTP-only).
 2. Move the old MediaWiki files out of the site folder. The deploy **deletes
-   anything** in the target folder except `files/`, `editor/` and `.well-known/`.
+   anything** in the target folder except `files/`, `editor/`, `.well-known/`
+   and the icon folders, and it refuses to run while `LocalSettings.php` is there.
 3. Create an SSH key pair for deploys and add the public key to
    `~/.ssh/authorized_keys` on DreamHost.
 4. In this repository's **Settings → Secrets and variables → Actions**, add:

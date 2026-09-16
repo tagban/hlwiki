@@ -52,14 +52,25 @@ jobs:
           SSH_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
-          if [ -z "$SSH_KEY" ]; then echo "Deploy secrets are not set yet; skipping deploy."; exit 0; fi
+          if [ -z "$SSH_KEY" ] || [ -z "$SSH_HOST" ] || [ -z "$SSH_USER" ] || [ -z "$DEPLOY_PATH" ]; then
+            echo "Deploy secrets are not all set yet; skipping deploy."
+            exit 0
+          fi
           mkdir -p ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
-          # files/ (large downloads), editor/ and .well-known/ live only on the server,
-          # so they are excluded and never deleted.
+          ssh_cmd="ssh -i $HOME/.ssh/deploy_key"
+          # Safety check: never wipe a folder that still holds the old MediaWiki install.
+          if $ssh_cmd "$SSH_USER@$SSH_HOST" "test -e '$DEPLOY_PATH/LocalSettings.php'"; then
+            echo "::error::$DEPLOY_PATH still contains MediaWiki (LocalSettings.php). Move it out before deploying."
+            exit 1
+          fi
+          # files/ (large downloads), editor/ and .well-known/ live only on the server, so they
+          # are excluded. ik0ns/, icons/ and banners/ are uploaded from the repo, but extra files
+          # already on the server are protected from deletion: Hotline clients load icons from there.
           rsync -rlvz --delete --chmod=D755,F644 \
             --exclude files/ --exclude editor/ --exclude .well-known/ \
-            -e "ssh -i ~/.ssh/deploy_key" \
+            --filter 'P /ik0ns/***' --filter 'P /icons/***' --filter 'P /banners/***' \
+            -e "$ssh_cmd" \
             public/ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
