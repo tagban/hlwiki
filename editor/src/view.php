@@ -25,27 +25,32 @@ function render(string $title, string $body): never
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title><?= e($title) ?> - <?= $site ?> editor</title>
-<link rel="stylesheet" href="/css/wiki.css">
-<link rel="stylesheet" href="/css/site.css">
+<?php foreach ($cfg['stylesheets'] as $css): ?>
+<link rel="stylesheet" href="<?= e(site_url($css)) ?>">
+<?php endforeach ?>
 <link rel="stylesheet" href="editor.css">
 </head>
 <body>
 <div id="page">
   <div id="header">
-    <a href="/" class="logo"><?php if (!empty($cfg['logo'])): ?><img src="<?= e($cfg['logo']) ?>" alt="<?= $site ?>"><?php else: ?><?= $site ?><?php endif ?></a>
+    <a href="<?= e(site_url('/')) ?>" class="logo"><?php if (!empty($cfg['logo'])): ?><img src="<?= e(site_url($cfg['logo'])) ?>" alt="<?= $site ?>"><?php else: ?><?= $site ?><?php endif ?></a>
     <span class="tagline">Editor</span>
   </div>
   <div id="topbar">
-    <a href="/">Back to the wiki</a> |
+    <a href="<?= e(site_url('/')) ?>">Back to <?= $site ?></a> |
     <a href="./">Editor home</a>
     <?php if ($user): ?>
       | <span class="who"><?php if (!empty($user['avatar'])): ?><img src="https://cdn.discordapp.com/avatars/<?= e($user['id']) ?>/<?= e($user['avatar']) ?>.png?size=32" alt="" width="16" height="16"> <?php endif ?><?= e($user['name']) ?></span>
       <form method="post" action="logout.php" class="inline"><input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>"><button type="submit" class="linkbutton">Log out</button></form>
     <?php endif ?>
   </div>
-  <div id="editor">
-    <h1 class="title"><?= e($title) ?></h1>
-    <?= $body ?>
+  <div id="layout" class="editor-layout">
+    <div id="main">
+      <div id="content">
+        <h1 class="title"><?= e($title) ?></h1>
+        <?= $body ?>
+      </div>
+    </div>
   </div>
 </div>
 </body>

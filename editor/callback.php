@@ -34,4 +34,4 @@ $_SESSION['user'] = update_membership([
 $returnTo = $_SESSION['return_to'] ?? './';
 unset($_SESSION['return_to']);
 // Only return to pages inside the editor.
-redirect(str_starts_with($returnTo, '/editor/') ? $returnTo : './');
+redirect(str_starts_with($returnTo, editor_path()) ? $returnTo : './');

@@ -2,7 +2,7 @@
 {{- $pages := slice }}
 {{- range $p := site.Pages }}
   {{- with $p.File }}
-    {{- $pages = $pages | append (dict "title" $p.Title "path" (replace .Path "\\" "/") "url" $p.RelPermalink "special" (isset $p.Params "layout")) }}
+    {{- $pages = $pages | append (dict "title" $p.Title "path" (replace .Path "\\" "/") "url" $p.RelPermalink "special" (in (slice "all-pages" "recent-changes" "search") $p.Layout)) }}
   {{- end }}
 {{- end }}
 {{- jsonify $pages }}

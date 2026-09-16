@@ -8,6 +8,11 @@ return [
     'site_name' => 'Hotline Wiki',
     'site_url' => 'https://hlwiki.com',
     'logo' => '/hl_wiki_logo.jpg',
+    // Where the editor itself is reached. Defaults to site_url + '/editor'. Set it when the
+    // editor has its own domain, such as 'https://edit.bnet.cc'.
+    // 'editor_url' => 'https://hlwiki.com/editor',
+    // The site's stylesheets, loaded from site_url. Defaults to /css/wiki.css and /css/site.css.
+    // 'stylesheets' => ['/css/wiki.css', '/css/site.css'],
 
     'discord' => [
         // Discord Developer Portal > your application > OAuth2

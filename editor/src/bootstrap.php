@@ -18,8 +18,10 @@ function config(): array
 {
     static $config = null;
     if ($config === null) {
-        // Secrets live outside the website: ~/editor-config/<site folder>.php
-        $siteDir = dirname(__DIR__, 2);
+        // Secrets live outside the website: ~/editor-config/<site folder>.php. The editor runs
+        // either inside a site (hlwiki.com/editor/) or as a site of its own (edit.bnet.cc).
+        $editorDir = dirname(__DIR__);
+        $siteDir = basename($editorDir) === 'editor' ? dirname($editorDir) : $editorDir;
         $path = getenv('FLATWIKI_EDITOR_CONFIG') ?: dirname($siteDir) . '/editor-config/' . basename($siteDir) . '.php';
         if (!is_file($path)) {
             http_response_code(503);
@@ -33,6 +35,8 @@ function config(): array
         }
         $config['data_dir'] = $config['data_dir'] ?? dirname($path) . '/' . basename($siteDir) . '-data';
         $config['site_url'] = rtrim($config['site_url'], '/');
+        $config['editor_url'] = rtrim($config['editor_url'] ?? $config['site_url'] . '/editor', '/');
+        $config['stylesheets'] = $config['stylesheets'] ?? ['/css/wiki.css', '/css/site.css'];
     }
     return $config;
 }
@@ -49,9 +53,28 @@ function is_https(): bool
         || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
 }
 
+/** "https://edit.bnet.cc/x" -> "https://edit.bnet.cc" */
+function origin(string $url): string
+{
+    $u = parse_url($url);
+    return $u['scheme'] . '://' . $u['host'] . (isset($u['port']) ? ':' . $u['port'] : '');
+}
+
+/** The editor's path on its host: "/editor/" inside a site, "/" on its own domain. */
+function editor_path(): string
+{
+    return rtrim((string) parse_url(config()['editor_url'], PHP_URL_PATH), '/') . '/';
+}
+
+/** A link or asset on the documentation site itself. */
+function site_url(string $path): string
+{
+    return preg_match('#^https?://#', $path) ? $path : config()['site_url'] . $path;
+}
+
 function discord(): Discord
 {
-    return new Discord(config()['discord'], config()['site_url'] . '/editor/callback.php');
+    return new Discord(config()['discord'], config()['editor_url'] . '/callback.php');
 }
 
 function github(): GitHub
@@ -72,11 +95,13 @@ function data_dir(string $sub): string
 // --- Request setup ----------------------------------------------------------
 
 if (!is_dev() && !is_https()) {
-    header('Location: ' . config()['site_url'] . ($_SERVER['REQUEST_URI'] ?? '/editor/'), true, 301);
+    header('Location: ' . origin(config()['editor_url']) . ($_SERVER['REQUEST_URI'] ?? editor_path()), true, 301);
     exit;
 }
 
-header("Content-Security-Policy: default-src 'self'; img-src 'self' https://cdn.discordapp.com data:; style-src 'self'; script-src 'self'; frame-ancestors 'none'");
+// The pages' own stylesheets and images may live on the documentation site's domain.
+$siteOrigin = origin(config()['site_url']);
+header("Content-Security-Policy: default-src 'self'; img-src 'self' $siteOrigin https://cdn.discordapp.com data:; style-src 'self' $siteOrigin; script-src 'self'; frame-ancestors 'none'");
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: same-origin');
 
@@ -87,7 +112,7 @@ session_save_path(data_dir('sessions'));
 session_name('flatwiki_editor');
 session_set_cookie_params([
     'lifetime' => 0,
-    'path' => '/editor/',
+    'path' => editor_path(),
     'secure' => !is_dev(),
     'httponly' => true,
     'samesite' => 'Lax',

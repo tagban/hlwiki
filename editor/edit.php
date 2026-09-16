@@ -187,7 +187,7 @@ if ($action === 'submit') {
             unset($_SESSION['uploads'][$formId]);
             $log = !empty($github->dryRunLog) ? '<h2>Dry run</h2><pre>' . e(json_encode($github->dryRunLog, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</pre>' : '';
             render('Thanks for your edit!', '<p>Your change has been sent for review. It will appear on the wiki once it is approved.</p>'
-                . '<p><a href="' . e($url) . '">View your edit on GitHub</a> &middot; <a href="./">Back to the editor</a> &middot; <a href="' . e(Page::url($path)) . '">Back to the page</a></p>' . $log);
+                . '<p><a href="' . e($url) . '">View your edit on GitHub</a> &middot; <a href="./">Back to the editor</a> &middot; <a href="' . e(site_url(Page::url($path))) . '">Back to the page</a></p>' . $log);
         }
     }
 }
@@ -203,15 +203,19 @@ function preview_html(string $body, array $uploads, GitHub $github): string
     $md = preg_replace('/\{\{<\s*\/?gallery\s*>\}\}/', '', (string) $md);
     // Images waiting to be submitted aren't on the site yet.
     foreach ($uploads as $image) {
-        $md = str_replace('(/images/' . $image['name'] . ')', "($site/editor/image.php?id={$image['id']})", $md);
+        $md = str_replace('(/images/' . $image['name'] . ')', '(' . config()['editor_url'] . "/image.php?id={$image['id']})", $md);
     }
     $md = preg_replace('/\]\(\/(?!\/)/', "]($site/", $md);
     $html = $github->markdown((string) $md);
     // GitHub routes images through its camo proxy, with the original URL hex-encoded
     // at the end. Point images from this wiki back at the wiki itself.
-    return (string) preg_replace_callback('#https://camo\.githubusercontent\.com/[0-9a-f]+/([0-9a-f]+)#', function ($m) use ($site) {
+    $editor = config()['editor_url'];
+    return (string) preg_replace_callback('#https://camo\.githubusercontent\.com/[0-9a-f]+/([0-9a-f]+)#', function ($m) use ($site, $editor) {
         $url = (string) @hex2bin($m[1]);
-        return str_starts_with($url, "$site/") ? e(substr($url, strlen($site))) : $m[0];
+        if (str_starts_with($url, "$editor/")) {
+            return e(substr($url, strlen(origin($editor))));
+        }
+        return str_starts_with($url, "$site/") ? e($url) : $m[0];
     }, $html);
 }
 
@@ -246,7 +250,7 @@ ob_start();
   <input type="text" id="category" name="category" value="<?= e($state['category']) ?>" maxlength="60">
   <?php else: ?>
   <input type="hidden" name="title" value="<?= e($state['title']) ?>">
-  <p class="note">Editing <a href="<?= e(Page::url($path)) ?>"><?= e($state['title']) ?></a>. <a href="https://www.markdownguide.org/basic-syntax/">How to format text</a></p>
+  <p class="note">Editing <a href="<?= e(site_url(Page::url($path))) ?>"><?= e($state['title']) ?></a>. <a href="https://www.markdownguide.org/basic-syntax/">How to format text</a></p>
   <?php endif ?>
 
   <label for="body">Page text</label>
@@ -268,8 +272,9 @@ ob_start();
   </fieldset>
 
   <?php if (!$isNew): ?>
-  <details<?= $errors && !Page::validFrontMatter($state['front']) ? ' open' : '' ?>>
-    <summary>Page settings (title, categories)</summary>
+  <?php /* Message and sequence pages keep most of their content in the settings, so open it for them. */ ?>
+  <details<?= ($errors && !Page::validFrontMatter($state['front'])) || strlen($state['front']) > strlen($state['body']) ? ' open' : '' ?>>
+    <summary>Page settings (title, categories and other fields)</summary>
     <textarea name="front" rows="8" aria-label="Page settings"><?= e($state['front']) ?></textarea>
   </details>
   <?php endif ?>
