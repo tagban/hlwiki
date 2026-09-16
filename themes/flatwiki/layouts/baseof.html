@@ -41,7 +41,7 @@
     </tr>
   </table>
   <div id="footer" role="contentinfo">
-    {{ site.Title }} works in any web browser, old or new, over plain HTTP or HTTPS.
+    {{ site.Params.footer | default (printf "%s works in any web browser, old or new, over plain HTTP or HTTPS." site.Title) }}
     {{ with site.Params.repo }}<a href="https://github.com/{{ . }}">Source on GitHub</a>.{{ end }}
     {{ with site.Params.discordInvite }}<a href="{{ . }}">Join the Discord</a>.{{ end }}
   </div>
