@@ -507,7 +507,6 @@ def write_htaccess(site):
         "ErrorDocument 404 /404.html",
         "",
         "RewriteEngine On",
-        "RewriteRule ^index\\.php/?$ / [R=301,L]",
     ]
     targets = {k: v for k, v in site.urls.items()}
     for key, page in site.pages.items():
@@ -525,6 +524,8 @@ def write_htaccess(site):
         p = re.escape(name)
         lines.append(f"RewriteRule ^images/[0-9a-f]/[0-9a-f]{{2}}/{p}$ {url} [R=301,L,NE]")
         lines.append(f"RewriteRule ^index\\.php/File:{p}$ {url} [R=301,L,NE]")
+    lines.append("# Anything else under index.php goes to the main page (after the specific rules above).")
+    lines.append("RewriteRule ^index\\.php(/.*)?$ /? [R=301,L]")
     (STATIC / ".htaccess").write_text("\n".join(lines) + "\n")
 
 

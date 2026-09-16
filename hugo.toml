@@ -31,6 +31,6 @@ disableHugoGeneratorInject = true
   repo = "tagban/hlwiki"
   branch = "main"
   # Discord editor address. Leave empty until the editor is deployed.
-  editorURL = ""
+  editorURL = "https://hlwiki.com/editor/edit.php"
   discordInvite = "https://discord.gg/vdxJHwzfrN"
   stylesheets = ["/css/wiki.css", "/css/site.css"]

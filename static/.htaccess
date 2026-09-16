@@ -8,7 +8,6 @@ AddType application/vnd.rar .rar
 ErrorDocument 404 /404.html
 
 RewriteEngine On
-RewriteRule ^index\.php/?$ / [R=301,L]
 RewriteRule ^index\.php/AccessPriviledges$ /access-priviledges/ [R=301,L,NE]
 RewriteCond %{QUERY_STRING} (^|&)title=AccessPriviledges(&|$)
 RewriteRule ^index\.php$ /access-priviledges/? [R=301,L,NE]
@@ -284,3 +283,5 @@ RewriteRule ^images/[0-9a-f]/[0-9a-f]{2}/Windows_modern\.png$ /images/Windows_mo
 RewriteRule ^index\.php/File:Windows_modern\.png$ /images/Windows_modern.png [R=301,L,NE]
 RewriteRule ^images/[0-9a-f]/[0-9a-f]{2}/XCCpr2\.5b\.zip$ /files/XCCpr2.5b.zip [R=301,L,NE]
 RewriteRule ^index\.php/File:XCCpr2\.5b\.zip$ /files/XCCpr2.5b.zip [R=301,L,NE]
+# Anything else under index.php goes to the main page (after the specific rules above).
+RewriteRule ^index\.php(/.*)?$ /? [R=301,L]
