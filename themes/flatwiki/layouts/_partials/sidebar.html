@@ -1,0 +1,6 @@
+{{- with .Params.nav }}{{ partial "navbox.html" . }}{{ end }}
+{{- with site.GetPage "/sidebar" }}
+<div class="portals">
+{{ .Content }}
+</div>
+{{- end }}

@@ -1,0 +1,9 @@
+{{- /* Related links for a group of pages, edited as a normal page under content/navboxes/. Shown at the top of the sidebar. */ -}}
+{{- with site.GetPage (printf "/navboxes/%s" .) }}
+<div class="navbox" role="navigation" aria-label="{{ .Title }}">
+  <h3>{{ .Title }}</h3>
+  <div class="navbox-body">
+    {{ .Content }}
+  </div>
+</div>
+{{- end }}

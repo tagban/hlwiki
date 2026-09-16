@@ -1,0 +1,21 @@
+{{ define "main" }}
+<h1 class="title">Search</h1>
+<div id="search"></div>
+<p id="search-fallback">Search needs a modern web browser. You can browse <a href="/all-pages/">All pages</a> or <a href="/categories/">Categories</a> instead.</p>
+<script type="text/javascript">
+// Only modern browsers load the search tool, so older browsers never see script errors.
+if (window.addEventListener && document.querySelector && window.Promise) {
+  var css = document.createElement("link");
+  css.rel = "stylesheet";
+  css.href = "/pagefind/pagefind-ui.css";
+  document.head.appendChild(css);
+  var js = document.createElement("script");
+  js.src = "/pagefind/pagefind-ui.js";
+  js.onload = function () {
+    document.getElementById("search-fallback").style.display = "none";
+    new PagefindUI({ element: "#search", showSubResults: true, showImages: false });
+  };
+  document.head.appendChild(js);
+}
+</script>
+{{ end }}

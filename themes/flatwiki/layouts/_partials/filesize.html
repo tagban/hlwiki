@@ -1,0 +1,4 @@
+{{- $b := float . -}}
+{{- if ge $b 1048576.0 }}{{ lang.FormatNumber 1 (div $b 1048576.0) }} MB
+{{- else if ge $b 1024.0 }}{{ lang.FormatNumber 0 (div $b 1024.0) }} KB
+{{- else }}{{ int $b }} bytes{{ end -}}

@@ -1,0 +1,12 @@
+# Build output
+/public/
+/resources/_gen/
+.hugo_build.lock
+
+# Generated at build time from git history
+/data/recentchanges.json
+
+# Large downloads live on the web server, not in git (see README)
+/files/
+
+.DS_Store

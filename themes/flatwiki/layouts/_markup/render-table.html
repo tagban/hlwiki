@@ -1,0 +1,23 @@
+{{- /* border/cellpadding attributes keep tables readable in browsers without CSS. */ -}}
+<div class="table-wrap">
+<table class="wikitable" border="1" cellpadding="4" cellspacing="0">
+  <thead>
+    {{- range .THead }}
+    <tr>
+      {{- range . }}
+      <th{{ with .Alignment }} align="{{ . }}"{{ end }}>{{ .Text }}</th>
+      {{- end }}
+    </tr>
+    {{- end }}
+  </thead>
+  <tbody>
+    {{- range .TBody }}
+    <tr>
+      {{- range . }}
+      <td{{ with .Alignment }} align="{{ . }}"{{ end }}>{{ .Text }}</td>
+      {{- end }}
+    </tr>
+    {{- end }}
+  </tbody>
+</table>
+</div>

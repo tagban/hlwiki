@@ -1,0 +1,33 @@
+baseURL = "https://hlwiki.com/"
+title = "Hotline Wiki"
+locale = "en"
+theme = "flatwiki"
+enableGitInfo = true
+disableKinds = ["rss"]
+disableHugoGeneratorInject = true
+
+[taxonomies]
+  category = "categories"
+
+[markup.goldmark.renderer]
+  # Imported MediaWiki pages contain some raw HTML (complex tables, <center>).
+  unsafe = true
+
+[markup.goldmark.extensions.typographer]
+  # Keep plain ASCII quotes and dashes for old browsers.
+  disable = true
+
+[markup.tableOfContents]
+  startLevel = 1
+  endLevel = 3
+
+[params]
+  tagline = "Preserving and documenting the Hotline network"
+  logo = "/hl_wiki_logo.jpg"
+  # GitHub repository that holds this site, used for Edit and History links.
+  repo = "tagban/hlwiki"
+  branch = "main"
+  # Discord editor address. Leave empty until the editor is deployed.
+  editorURL = ""
+  discordInvite = "https://discord.gg/vdxJHwzfrN"
+  stylesheets = ["/css/wiki.css", "/css/site.css"]

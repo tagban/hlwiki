@@ -1,0 +1,22 @@
+{{- $repo := site.Params.repo }}
+{{- $branch := site.Params.branch | default "main" }}
+{{- /* Until a page is edited after the import, show its date from the old wiki. */}}
+{{- $edited := false }}
+{{- with .GitInfo }}{{ if not (hasPrefix .Subject "Import from MediaWiki") }}{{ $edited = . }}{{ end }}{{ end }}
+<div class="pageinfo">
+  {{- with $edited }}
+  Last edited {{ .AuthorDate.Format "January 2, 2006" }} by {{ .AuthorName }}.
+  {{- else }}{{ with .Params.mediawiki }}
+  Last edited {{ (time .last_edited).Format "January 2, 2006" }} on the old MediaWiki site.
+  {{- end }}{{ end }}
+  {{- with .File }}
+  <br><a href="https://github.com/{{ $repo }}/edit/{{ $branch }}/content/{{ .Path }}">Edit on GitHub</a>
+  | <a href="https://github.com/{{ $repo }}/commits/{{ $branch }}/content/{{ .Path }}">Page history</a>
+    {{- with site.Params.editorURL }}
+  | <a href="{{ . }}?page={{ $.File.Path | urlquery }}">Edit with Discord</a>
+    {{- end }}
+  {{- end }}
+  {{- with .Params.mediawiki }}{{ with .contributors }}
+  <br>Original wiki contributors: {{ delimit . ", " }}
+  {{- end }}{{ end }}
+</div>

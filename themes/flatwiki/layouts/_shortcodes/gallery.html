@@ -1,0 +1,8 @@
+{{- /* One image per line inside the shortcode: /images/name.png|Caption */ -}}
+<div class="gallery">
+{{- range split (trim .Inner "\n") "\n" }}
+  {{- $parts := split . "|" }}
+  {{- $caption := index $parts 1 | default "" }}
+  <span class="gallery-item"><img src="{{ index $parts 0 }}" height="150" alt="{{ $caption }}"><br>{{ $caption }}</span>
+{{- end }}
+</div>

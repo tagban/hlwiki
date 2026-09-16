@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="{{ site.Language.Locale | default "en" }}">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} - {{ site.Title }}{{ end }}</title>
+{{- with .Description }}
+<meta name="description" content="{{ . }}">
+{{- end }}
+{{- /* @import hides the stylesheet from Netscape 4, whose CSS support breaks layouts. */}}
+<style type="text/css">
+{{- range site.Params.stylesheets }}
+@import url("{{ . }}");
+{{- end }}
+</style>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div id="page">
+  <div id="header">
+    <a href="/" class="logo">{{ with site.Params.logo }}<img src="{{ . }}" alt="{{ site.Title }}">{{ else }}{{ site.Title }}{{ end }}</a>
+    {{ with site.Params.tagline }}<span class="tagline">{{ . }}</span>{{ end }}
+  </div>
+  <div id="topbar" role="navigation" aria-label="Site">
+    <a href="/">Main page</a> |
+    <a href="/recent-changes/">Recent changes</a> |
+    <a href="/all-pages/">All pages</a> |
+    <a href="/categories/">Categories</a> |
+    <a href="/search/">Search</a>
+  </div>
+  <table id="layout" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+    <tr>
+      <td id="main" valign="top">
+        <div id="content" role="main">
+          {{ block "main" . }}{{ end }}
+        </div>
+      </td>
+      <td id="sidebar" valign="top" width="200" role="complementary" aria-label="Sidebar">
+        {{ partial "sidebar.html" . }}
+      </td>
+    </tr>
+  </table>
+  <div id="footer" role="contentinfo">
+    {{ site.Title }} works in any web browser, old or new, over plain HTTP or HTTPS.
+    {{ with site.Params.repo }}<a href="https://github.com/{{ . }}">Source on GitHub</a>.{{ end }}
+    {{ with site.Params.discordInvite }}<a href="{{ . }}">Join the Discord</a>.{{ end }}
+  </div>
+</div>
+</body>
+</html>

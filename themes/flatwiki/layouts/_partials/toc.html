@@ -1,0 +1,11 @@
+{{- /* Like MediaWiki: show contents on pages with 4+ headings, unless toc is set in front matter. */ -}}
+{{- $show := ge (len .Fragments.HeadingsMap) 4 }}
+{{- if isset .Params "toc" }}{{ $show = .Params.toc }}{{ end }}
+{{- if $show }}
+  {{- with .TableOfContents }}
+<div class="toc" role="navigation" aria-label="Contents">
+  <strong>Contents</strong>
+  {{ . }}
+</div>
+  {{- end }}
+{{- end }}

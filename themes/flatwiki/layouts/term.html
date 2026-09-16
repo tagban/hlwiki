@@ -1,0 +1,16 @@
+{{ define "main" }}
+<div data-pagefind-body>
+<h1 class="title">Category: {{ .Title }}</h1>
+{{ .Content }}
+</div>
+<h2>Pages in this category</h2>
+<ul>
+{{- range .Pages.ByTitle }}
+  <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+{{- else }}
+  <li>No pages yet.</li>
+{{- end }}
+</ul>
+{{ partial "categories.html" . }}
+{{ partial "pageinfo.html" . }}
+{{ end }}

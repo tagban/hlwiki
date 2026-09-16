@@ -1,0 +1,26 @@
+{{ define "main" }}
+<h1 class="title">Recent changes</h1>
+{{- $repo := site.Params.repo }}
+{{- with index hugo.Data "recentchanges" }}
+<p>The latest edits to this wiki. Every change is saved in GitHub, where you can see exactly what was changed.</p>
+<ul class="changes">
+  {{- range . }}
+  <li>
+    <span class="date">{{ (time .date).Format "Jan 2, 2006" }}</span>
+    <strong>{{ .author }}</strong>:
+    <a href="https://github.com/{{ $repo }}/commit/{{ .hash }}">{{ .subject }}</a>
+    {{- with .pages }}
+    <br><span class="changed">
+      {{- range $i, $p := . }}{{ if $i }}, {{ end }}
+        {{- with site.GetPage $p.ref }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ else }}{{ $p.ref }}{{ end }}
+        {{- if eq $p.status "A" }} (new){{ else if eq $p.status "D" }} (deleted){{ end }}
+      {{- end }}
+    </span>
+    {{- end }}
+  </li>
+  {{- end }}
+</ul>
+{{- else }}
+<p>No changes have been recorded yet.</p>
+{{- end }}
+{{ end }}

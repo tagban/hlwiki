@@ -1,0 +1,6 @@
+{{- $dest := .Destination -}}
+<a href="{{ $dest | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ if (urls.Parse $dest).IsAbs }} class="external"{{ end }}>{{ .Text }}</a>
+{{- /* Downloads show their size, which matters on slow connections. */ -}}
+{{- if hasPrefix $dest "/files/" -}}
+  {{- with index (index hugo.Data "files") (path.Base $dest) }} <small class="filesize">({{ partial "filesize.html" .size }})</small>{{ end -}}
+{{- end -}}

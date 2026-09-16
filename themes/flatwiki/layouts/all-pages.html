@@ -1,0 +1,28 @@
+{{ define "main" }}
+<h1 class="title">All pages</h1>
+{{- $special := slice "all-pages" "recent-changes" "search" }}
+{{- $pages := where (where site.RegularPages "Layout" "not in" $special) "Section" "ne" "users" }}
+{{- $letters := slice }}
+{{- range $pages }}{{ $letters = $letters | append (upper (substr .Title 0 1)) }}{{ end }}
+<p class="letters">
+{{- range uniq (sort $letters) }} <a href="#letter-{{ . | urlize }}">{{ . }}</a>{{ end }}
+</p>
+{{- range $letter := uniq (sort $letters) }}
+<h2 id="letter-{{ $letter | urlize }}">{{ $letter }}</h2>
+<ul>
+  {{- range sort $pages "Title" }}
+    {{- if eq (upper (substr .Title 0 1)) $letter }}
+  <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+    {{- end }}
+  {{- end }}
+</ul>
+{{- end }}
+{{- with where site.RegularPages "Section" "users" }}
+<h2 id="users">User pages</h2>
+<ul>
+  {{- range .ByTitle }}
+  <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+  {{- end }}
+</ul>
+{{- end }}
+{{ end }}

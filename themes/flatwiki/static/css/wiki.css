@@ -1,0 +1,110 @@
+/*
+ * flatwiki base styles.
+ * The HTML already works with no CSS at all (for very old browsers),
+ * so everything here is an enhancement. Colors live in the site's own site.css.
+ */
+
+body {
+  margin: 0;
+  padding: 20px 10px;
+  font-family: Verdana, Tahoma, Geneva, sans-serif;
+  font-size: 81.25%;
+  line-height: 1.5;
+  color: #111;
+  background: #fff;
+}
+
+a { color: #0645ad; }
+a:visited { color: #0b0080; }
+a:hover { text-decoration: none; }
+a:focus-visible { outline: 2px solid #1a5fd0; outline-offset: 2px; }
+
+.skip { position: absolute; left: -9999px; top: 0; }
+.skip:focus { left: 10px; top: 10px; z-index: 10; padding: 6px 10px; background: #fff; color: #000; }
+
+#page { max-width: 880px; margin: 0 auto; }
+
+#header { padding: 14px 18px; border: 1px solid #999; border-bottom: 0; }
+#header .logo, #header .logo img { vertical-align: middle; border: 0; }
+#header .tagline { margin-left: 12px; font-size: 90%; vertical-align: middle; }
+
+#topbar { padding: 6px 12px; border: 1px solid #999; text-align: center; font-weight: bold; }
+#topbar a { padding: 0 6px; text-decoration: none; white-space: nowrap; }
+#topbar a:hover { text-decoration: underline; }
+
+#layout { border: 1px solid #999; border-top: 0; border-collapse: collapse; }
+#main { padding: 20px 25px; vertical-align: top; }
+#sidebar { width: 200px; padding: 15px; vertical-align: top; border-left: 1px solid #ccc; }
+
+#sidebar h3 { margin: 0; padding: 4px 10px; font-size: 11px; border: 1px solid #999; }
+#sidebar ul { margin: 0 0 15px; padding: 6px 10px; list-style: none; border: 1px solid #999; border-top: 0; }
+#sidebar li { padding: 2px 0; }
+
+#content img { max-width: 100%; height: auto; }
+#content h1, #content h2 { font-weight: normal; line-height: 1.25; }
+#content h1 { font-size: 1.6em; border-bottom: 1px solid #aaa; }
+#content h2 { font-size: 1.4em; margin-top: 1.4em; border-bottom: 1px solid #ccc; }
+#content h3 { font-size: 1.15em; }
+#content h1.title { font-size: 1.8em; margin: 0 0 .6em; padding-bottom: 4px; }
+
+pre, code { font-family: Monaco, Menlo, "Courier New", Courier, monospace; font-size: 1em; }
+code { padding: 0 3px; background: #f3f3f3; }
+pre { padding: 8px 10px; overflow-x: auto; background: #f8f8f8; border: 1px solid #ddd; }
+pre code { padding: 0; background: none; }
+
+.table-wrap { max-width: 100%; margin: 1em 0; overflow-x: auto; }
+#content table { border-collapse: collapse; }
+#content th, #content td { padding: 3px 7px; vertical-align: top; border: 1px solid #aaa; }
+#content th { text-align: left; background: #eaecf0; }
+table.wikitable { background: #f9f9f9; border: 1px solid #aaa; }
+#content td > p:only-child, #content th > p:only-child { margin: 0; }
+
+#content .infobox { float: right; clear: right; margin: 0 0 1em 1.2em; font-size: 90%; background: #f9f9f9; border: 1px solid #aaa; }
+#content .infobox { width: 22em; }
+#content .infobox th, #content .infobox td { border: 0; border-top: 1px solid #ddd; background: none; }
+#content .infobox .infobox-title { text-align: center; font-size: 115%; background: #e6e6e6; border-top: 0; }
+#content .infobox .infobox-image { text-align: center; }
+#sidebar .navbox-body { margin: 0 0 15px; padding: 2px 10px 6px; border: 1px solid #999; border-top: 0; }
+#sidebar .navbox-body p { margin: .6em 0 .1em; }
+#sidebar .navbox-body ul { margin: 0; padding: 0; border: 0; background: none; }
+
+.toc { display: inline-block; margin: .5em 0 1em; padding: 6px 14px; background: #f8f9fa; border: 1px solid #aaa; }
+.toc ul { margin: .2em 0; padding-left: 1.3em; }
+.toc nav > ul { padding-left: 0; list-style: none; }
+
+.catlinks { clear: both; margin-top: 2em; padding: 5px 8px; background: #f8f9fa; border: 1px solid #aaa; }
+.pageinfo { clear: both; margin-top: 1em; font-size: 90%; color: #555; }
+.filesize { color: #555; white-space: nowrap; }
+
+.iconbox { display: inline-block; width: 60px; margin: 2px; padding: 3px 2px; text-align: center; vertical-align: top; background: #f9f9f9; border: 1px solid #ccc; border-radius: 4px; }
+.iconbox img { display: block; margin: 0 auto; image-rendering: pixelated; }
+.iconbox b { display: block; font-size: 10px; color: #555; }
+
+.communityicon { display: inline-block; min-width: 60px; max-width: 250px; margin: 2px; padding: 6px; text-align: center; vertical-align: top; background: #000; border: 1px solid #444; border-radius: 4px; }
+.communityicon img { display: block; width: auto; height: 18px; margin: 0 auto 4px; image-rendering: pixelated; }
+.communityicon b { display: block; font: bold 10px "Courier New", Courier, monospace; color: #999; }
+
+.banner { display: inline-block; max-width: 100%; margin: 10px 0; padding: 5px; text-align: center; background: #000; border: 1px solid #444; }
+.banner small { font-family: "Courier New", Courier, monospace; letter-spacing: 1px; text-transform: uppercase; color: #999; }
+
+.gallery-item { display: inline-block; margin: 4px 8px 4px 0; text-align: center; vertical-align: top; }
+.letters a { padding: 0 3px; }
+.changes li { margin-bottom: .6em; }
+.changes .date, .changes .changed { color: #555; }
+
+#footer { padding: 10px; text-align: center; font-size: 90%; }
+
+@media (max-width: 760px) {
+  body { padding: 0; font-size: 100%; }
+  #layout, #layout > tbody, #layout > tbody > tr, #main, #sidebar { display: block; width: auto; }
+  #header, #topbar, #layout { border-left: 0; border-right: 0; }
+  #header .tagline { display: block; margin: 6px 0 0; }
+  #topbar { line-height: 2.2; }
+  #main { padding: 14px 16px; }
+  #sidebar { padding: 14px 16px; border-left: 0; border-top: 1px solid #ccc; }
+  #content .infobox { float: none; width: auto; margin: 0 0 1em; }
+}
+
+@media print {
+  #topbar, #sidebar, .pageinfo, .skip { display: none; }
+}

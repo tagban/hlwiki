@@ -1,0 +1,62 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  # Pull requests are built (to catch mistakes) but never deployed.
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  HUGO_VERSION: 0.166.0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for "Last edited by" and Recent changes
+
+      - name: Install Hugo
+        run: |
+          curl -sSL -o "$RUNNER_TEMP/hugo.deb" "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
+          sudo dpkg -i "$RUNNER_TEMP/hugo.deb"
+
+      - name: Make PNG copies of new SVG images for old browsers
+        run: |
+          missing=$(for f in static/images/*.svg; do [ -e "$f" ] && [ ! -e "$f.png" ] && echo "$f"; done)
+          if [ -n "$missing" ]; then
+            sudo apt-get install -y librsvg2-bin
+            for f in $missing; do rsvg-convert -w 256 --keep-aspect-ratio "$f" -o "$f.png"; done
+          fi
+
+      - name: Build site
+        run: |
+          python3 scripts/recent_changes.py
+          hugo --gc
+          npx --yes pagefind@1 --site public
+
+      - name: Deploy to DreamHost
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          SSH_HOST: ${{ secrets.DEPLOY_HOST }}
+          SSH_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          if [ -z "$SSH_KEY" ]; then echo "Deploy secrets are not set yet; skipping deploy."; exit 0; fi
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+          # files/ (large downloads), editor/ and .well-known/ live only on the server,
+          # so they are excluded and never deleted.
+          rsync -rlvz --delete --chmod=D755,F644 \
+            --exclude files/ --exclude editor/ --exclude .well-known/ \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            public/ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"

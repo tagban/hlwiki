@@ -1,0 +1,18 @@
+/* Hotline Wiki colors, based on the Vivahx retro theme from the old MediaWiki site. */
+
+body { background: #fdf5c6; }
+
+#header { background: #000; }
+#header .tagline { color: #c8c8c8; }
+
+#topbar { background: #9ada92; }
+#topbar a, #topbar a:visited { color: #333366; }
+
+#layout { background: #fff; }
+#sidebar { background: #f2f2f2; }
+#sidebar h3 { color: #000; background: #e6e4d0 linear-gradient(#fbfbf3, #dedcc8); }
+#sidebar ul, #sidebar .navbox-body { background: #fff; }
+#sidebar li a:before { content: "\00BB  "; font-weight: bold; }
+
+#content h1.title { color: #333366; border-bottom-color: #9ada92; }
+#footer { color: #555; }

@@ -1,0 +1,7 @@
+{{- $src := .Destination -}}
+{{- /* Browsers without SVG support ignore <picture> and show the PNG copy. */ -}}
+{{- if and (strings.HasSuffix $src ".svg") (fileExists (printf "static%s.png" $src)) -}}
+<picture><source srcset="{{ $src }}" type="image/svg+xml"><img src="{{ $src }}.png" alt="{{ .PlainText }}"></picture>
+{{- else -}}
+<img src="{{ $src | safeURL }}" alt="{{ .PlainText }}"{{ with .Title }} title="{{ . }}"{{ end }}>
+{{- end -}}

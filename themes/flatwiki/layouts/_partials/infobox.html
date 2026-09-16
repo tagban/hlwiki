@@ -1,0 +1,24 @@
+{{- with .Params.infobox }}
+{{- $labels := slice
+  (slice "creator" "Creator")
+  (slice "latest_version" "Latest version")
+  (slice "date_first_release" "First release")
+  (slice "date_latest_release" "Latest release")
+  (slice "os" "Operating system")
+  (slice "type" "Type")
+  (slice "license" "License")
+  (slice "website" "Website") }}
+<table class="infobox" align="right" border="1" cellpadding="4" cellspacing="0">
+  <tr><th colspan="2" class="infobox-title">{{ .name | default $.Title }}</th></tr>
+  {{- with .image }}
+  <tr><td colspan="2" class="infobox-image"><img src="{{ . }}" alt="" width="100"></td></tr>
+  {{- end }}
+  {{- $box := . }}
+  {{- range $labels }}
+    {{- $label := index . 1 }}
+    {{- with index $box (index . 0) }}
+  <tr><th scope="row">{{ $label }}</th><td>{{ . | markdownify }}</td></tr>
+    {{- end }}
+  {{- end }}
+</table>
+{{- end }}
