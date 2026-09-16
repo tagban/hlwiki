@@ -36,6 +36,7 @@ def main():
                 pages.append({"ref": page_ref(path), "status": status[0]})
         changes.append({"hash": commit, "author": author, "date": date, "subject": subject, "pages": pages})
     out = ROOT / "data/recentchanges.json"
+    out.parent.mkdir(exist_ok=True)
     out.write_text(json.dumps(changes, indent=1) + "\n")
     print(f"Wrote {len(changes)} changes to {out.relative_to(ROOT)}")
 
