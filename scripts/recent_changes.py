@@ -21,13 +21,15 @@ def page_ref(path):
 def main():
     log = subprocess.run(
         ["git", "log", f"--max-count={LIMIT}", "--date=iso-strict", "--name-status",
-         "--pretty=format:%x1e%H%x1f%an%x1f%ad%x1f%s", "--", "content"],
+         "--pretty=format:%x1e%H%x1f%ae%x1f%ad%x1f%s", "--", "content"],
         cwd=ROOT, capture_output=True, text=True, check=True,
     ).stdout
     changes = []
     for entry in filter(None, log.split("\x1e")):
         header, *lines = entry.strip("\n").split("\n")
-        commit, author, date, subject = header.split("\x1f")
+        commit, email, date, subject = header.split("\x1f")
+        # Show a username, never a real name: the email's local part, after any "12345+".
+        author = email.split("@")[0].split("+")[-1]
         pages = []
         for line in lines:
             status, *paths = line.split("\t")

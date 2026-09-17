@@ -1,0 +1,10 @@
+{{- /* A commit author's username, never their real name: the part of the email before "@",
+       after any "12345+" prefix. GitHub web edits give the GitHub username, Discord editor
+       edits the Discord username. */ -}}
+{{- $email := .AuthorEmail -}}
+{{- if $email -}}
+  {{- $parts := split (index (split $email "@") 0) "+" -}}
+  {{- index $parts (sub (len $parts) 1) -}}
+{{- else -}}
+  {{- .AuthorName -}}
+{{- end -}}

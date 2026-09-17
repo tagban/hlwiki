@@ -5,7 +5,7 @@
 {{- with .GitInfo }}{{ if not (hasPrefix .Subject "Import from MediaWiki") }}{{ $edited = . }}{{ end }}{{ end }}
 <div class="pageinfo">
   {{- with $edited }}
-  Last edited {{ .AuthorDate.Format "January 2, 2006" }} by {{ .AuthorName }}.
+  Last edited {{ .AuthorDate.Format "January 2, 2006" }} by {{ partial "author-name.html" . }}.
   {{- else }}{{ with .Params.mediawiki }}
   Last edited {{ (time .last_edited).Format "January 2, 2006" }} on the old MediaWiki site.
   {{- end }}{{ end }}
