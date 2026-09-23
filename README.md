@@ -49,6 +49,18 @@ straight from `http://hlwiki.com/ik0ns/<number>.png`, so these URLs must never
 change. To add icons, put the PNG files in `static/ik0ns/`. Deploys upload new
 icons but never delete icons that are already on the server.
 
+`static/ik0ns/ik0ns.csv` makes the archive searchable: one row per icon with
+`id,text,tags,colors` (the words on the icon, what it shows, and its main colors;
+tags and colors are separated by semicolons). The gallery at `/ik0ns/` searches
+it, and so does Invigoration's icon picker. Both hide icons tagged `nsfw` unless
+**Show NSFW** is ticked. Anyone can download it, and fixes are
+welcome. Give a new icon a row too.
+
+To take an icon down for good, delete its PNG and add its number to
+`scripts/removed-ik0ns.txt`. The next deploy deletes it from the server, and the
+build fails if it's ever added back. `ik0ns.zip` is rebuilt from the repo on every
+deploy, so it always matches the site.
+
 ## Downloads
 
 Client and server downloads are too large for git, so they live only on the web

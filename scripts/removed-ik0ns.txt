@@ -1,0 +1,9 @@
+# Community icons taken out of the archive on purpose. Each deploy deletes these from the
+# server's ik0ns/ folder (which it otherwise never deletes from, because Hotline clients load
+# icons from there) and the build fails if one of them is ever added back to static/ik0ns/.
+# One icon number per line; anything after a # is a note.
+14522  # swastika
+27164  # Nazi: "Juden hasst"
+27172  # Nazi: "Heil Hitler"
+27184  # swastika
+27188  # swastika flag

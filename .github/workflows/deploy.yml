@@ -44,6 +44,24 @@ jobs:
           hugo --gc
           npx --yes pagefind@1 --site public
 
+      - name: Check removed icons stay removed
+        run: |
+          bad=""
+          for id in $(sed 's/#.*//' scripts/removed-ik0ns.txt); do
+            if [ -e "static/ik0ns/$id.png" ]; then bad="$bad $id"; fi
+          done
+          if [ -n "$bad" ]; then
+            echo "::error::These icons are listed in scripts/removed-ik0ns.txt but are back in static/ik0ns/:$bad"
+            exit 1
+          fi
+
+      # The whole archive as one download (Invigoration's "Download All" uses it), rebuilt from
+      # the repo every time so it always matches what's on the site, removals included.
+      - name: Zip the icon archive
+        run: |
+          cd static
+          zip -qrX ../public/ik0ns/ik0ns.zip ik0ns -i '*.png'
+
       - name: Deploy to DreamHost
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         env:
@@ -74,6 +92,12 @@ jobs:
             --filter 'P /ik0ns/***' --filter 'P /icons/***' --filter 'P /banners/***' \
             -e "$ssh_cmd" \
             public/ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
+          # Icons taken out on purpose (scripts/removed-ik0ns.txt). The upload above never deletes
+          # from ik0ns/, so these are removed from the server by name.
+          removed=$(sed 's/#.*//' scripts/removed-ik0ns.txt | tr -s ' \n' ' ')
+          if [ -n "${removed// /}" ]; then
+            $ssh_cmd "$SSH_USER@$SSH_HOST" "cd '$DEPLOY_PATH/ik0ns' && for id in $removed; do rm -fv \"\$id.png\"; done"
+          fi
           # The Discord editor (PHP). Its secrets live outside the website in ~/editor-config/.
           rsync -rlvz --delete --chmod=D755,F644 \
             -e "$ssh_cmd" \
