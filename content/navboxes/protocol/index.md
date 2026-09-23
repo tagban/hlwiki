@@ -34,3 +34,4 @@ build:
 
 - [Icon Gallery](/icon-gallery/)
 - [Community Icons](/community-icons/)
+- [Icon Index](/icon-index/)

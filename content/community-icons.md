@@ -30,6 +30,10 @@ These examples are pulled from the community archives in the `/ik0ns/` directory
 
 </div>
 
+Browse and search the whole archive in the [icon gallery](https://hlwiki.com/ik0ns/), by
+number or by what's on an icon. Developers can use the same search data: see
+[Icon Index](/icon-index/).
+
 ## Famous Icon Groups
 
 - **BadMoon:** Known for dark, sleek, and atmospheric icon sets often found on underground file-sharing servers.
