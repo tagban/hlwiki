@@ -1,43 +1,43 @@
 <?php
-// Define the directory to scan (current directory)
-$dir = './';
+// Every icon in this folder, by number, in natural order (1, 2, 10 instead of 1, 10, 2).
+$ids = array();
+foreach (glob('./*.png') as $file) {
+    $ids[] = basename($file, '.png');
+}
+natsort($ids);
+$ids = array_values($ids);
 
-// Scan the directory for .png files
-$files = glob($dir . "*.png");
-
-// Sort files naturally (1, 2, 10 instead of 1, 10, 2)
-natsort($files);
-
-// Icons ik0ns.csv tags "nsfw" (id,text,tags,colors; tags separated by semicolons) start out
-// hidden, marked here rather than by the script so they never flash up while the page loads.
+// Icons ik0ns.csv tags "nsfw" (id,text,tags,colors; tags separated by semicolons) stay out of
+// results unless Show NSFW is ticked. Worked out here so it holds even before the CSV loads.
 $nsfw = array();
-if (($csv = @fopen($dir . 'ik0ns.csv', 'r')) !== false) {
+if (($csv = @fopen('./ik0ns.csv', 'r')) !== false) {
     while (($row = fgetcsv($csv, 0, ',', '"', '')) !== false) {
         if (isset($row[2]) && in_array('nsfw', array_map('trim', explode(';', strtolower($row[2]))), true)) {
-            $nsfw[trim($row[0])] = true;
+            $nsfw[] = trim($row[0]);
         }
     }
     fclose($csv);
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Icon Gallery</title>
     <style>
-        body { font-family: sans-serif; background: #1a1a1a; color: white; }
+        body { font-family: sans-serif; background: #1a1a1a; color: white; margin: 0; }
         .search { position: sticky; top: 0; background: #1a1a1a; padding: 15px 20px 5px; z-index: 1; }
         .search input[type=search] { width: 100%; max-width: 520px; font-size: 16px; padding: 8px 10px; border-radius: 6px; border: 1px solid #555; background: #262626; color: white; }
         .search p { font-size: 12px; color: #999; margin: 6px 0 0; }
         .search a { color: #8cf; }
         .nsfw-toggle { font-size: 14px; color: #ccc; margin-left: 12px; white-space: nowrap; }
+        button { font-size: 14px; padding: 6px 12px; border-radius: 6px; border: 1px solid #555; background: #333; color: white; cursor: pointer; }
+        button:hover { background: #444; }
         .gallery { display: flex; flex-wrap: wrap; gap: 15px; padding: 20px; }
         .icon-card { text-align: center; background: #333; padding: 10px; border-radius: 8px; }
-        .icon-card.hidden { display: none; }
-        img { display: block; max-width: 232px; height: auto; margin-bottom: 5px; }
-        span { font-size: 12px; color: #bbb; }
+        .icon-card img { display: block; max-width: 232px; height: auto; margin-bottom: 5px; }
+        .icon-card span { font-size: 12px; color: #bbb; }
+        .more { padding: 0 20px 30px; }
     </style>
 </head>
 <body>
@@ -45,30 +45,33 @@ if (($csv = @fopen($dir . 'ik0ns.csv', 'r')) !== false) {
     <div class="search">
         <input id="q" type="search" placeholder="Search: a number, words on the icon, what's on it (flag, eye, starcraft...), or a color" autofocus>
         <label class="nsfw-toggle"><input id="nsfw" type="checkbox"> Show NSFW</label>
-        <p id="count">Every icon is searchable by the words on it, what it shows, and its colors &mdash; from <a href="ik0ns.csv">ik0ns.csv</a>, which anyone can download and use.</p>
+        <button id="all" type="button">Browse all</button>
+        <p id="count"><?php echo number_format(count($ids)); ?> icons. Type to search them by number, the words on them, what they show, or their colors, using <a href="ik0ns.csv">ik0ns.csv</a>, which anyone can download and use (<a href="/icon-index/">how</a>).</p>
     </div>
 
-    <div class="gallery">
-        <?php foreach ($files as $file): ?>
-            <?php $id = basename($file, '.png'); $isNsfw = isset($nsfw[$id]); ?>
-            <div class="icon-card<?php echo $isNsfw ? ' nsfw hidden' : ''; ?>" data-id="<?php echo $id; ?>">
-                <img src="<?php echo $file; ?>" alt="Icon" loading="lazy">
-                <span><?php echo basename($file); ?></span>
-            </div>
-        <?php endforeach; ?>
-    </div>
+    <div class="gallery" id="gallery"></div>
+    <div class="more"><button id="more" type="button" style="display: none">Show more</button></div>
 
     <script>
-    // ik0ns.csv: id,text,tags,colors — tags and colors separated by semicolons. The same file
-    // Invigoration's icon picker searches with, so a fix there shows up in both.
+    // Nothing is shown until you search (or pick Browse all), and then only a page of results at
+    // a time, so opening the gallery doesn't load thousands of images at once.
+    var ids = <?php echo json_encode($ids); ?>;
+    var nsfwIds = <?php echo json_encode($nsfw); ?>;
     (function () {
-        var cards = Array.prototype.slice.call(document.querySelectorAll('.icon-card'));
-        var cardById = {};
-        cards.forEach(function (card) { cardById[card.getAttribute('data-id')] = card; });
+        var PAGE = 200;
+        var isNsfw = {};
+        nsfwIds.forEach(function (id) { isNsfw[id] = true; });
+        var info = {};
         var words = {};
         var input = document.getElementById('q');
+        var showNsfw = document.getElementById('nsfw');
         var count = document.getElementById('count');
+        var gallery = document.getElementById('gallery');
+        var more = document.getElementById('more');
         var intro = count.innerHTML;
+        var browsing = false;
+        var results = [];
+        var shown = 0;
 
         function parseCsv(text) {
             var rows = [], row = [], field = '', quoted = false;
@@ -99,26 +102,61 @@ if (($csv = @fopen($dir . 'ik0ns.csv', 'r')) !== false) {
         function matches(id, query, queryWords) {
             if (/^\d+$/.test(query)) { return id.indexOf(query) === 0; }
             var own = words[id];
-            if (!own) { return false; }
+            if (!own || queryWords.length === 0) { return false; }
             return queryWords.every(function (q) {
                 return own.some(function (w) { return w.indexOf(q) === 0; });
             });
         }
 
-        var showNsfw = document.getElementById('nsfw');
+        function card(id) {
+            var div = document.createElement('div');
+            div.className = 'icon-card';
+            var tip = ['Icon ' + id];
+            var about = info[id];
+            if (about) {
+                if (about.text) { tip.push('"' + about.text + '"'); }
+                if (about.tags) { tip.push(about.tags.split(';').join(', ')); }
+                if (about.colors) { tip.push(about.colors.split(';').join(', ')); }
+            }
+            div.title = tip.join('\n');
+            var img = document.createElement('img');
+            img.src = './' + id + '.png';
+            img.alt = (about && (about.text || about.tags.split(';')[0])) || 'Icon ' + id;
+            img.loading = 'lazy';
+            var label = document.createElement('span');
+            label.textContent = id + '.png';
+            div.appendChild(img);
+            div.appendChild(label);
+            return div;
+        }
 
-        function filter() {
+        function showPage() {
+            var end = Math.min(shown + PAGE, results.length);
+            var fragment = document.createDocumentFragment();
+            for (; shown < end; shown++) { fragment.appendChild(card(results[shown])); }
+            gallery.appendChild(fragment);
+            more.style.display = shown < results.length ? '' : 'none';
+            more.textContent = 'Show more (' + (results.length - shown) + ' left)';
+        }
+
+        function update() {
             var query = input.value.trim();
             var queryWords = split(query);
-            var shown = 0;
-            cards.forEach(function (card) {
-                var nsfw = card.className.indexOf('nsfw') >= 0;
-                var show = (!nsfw || showNsfw.checked)
-                    && (query === '' || matches(card.getAttribute('data-id'), query, queryWords));
-                card.className = 'icon-card' + (nsfw ? ' nsfw' : '') + (show ? '' : ' hidden');
-                if (show) { shown++; }
+            gallery.innerHTML = '';
+            shown = 0;
+            if (query === '' && !browsing) {
+                results = [];
+                more.style.display = 'none';
+                count.innerHTML = intro;
+                return;
+            }
+            results = ids.filter(function (id) {
+                return (!isNsfw[id] || showNsfw.checked) && (query === '' || matches(id, query, queryWords));
             });
-            count.innerHTML = query === '' ? intro : shown + ' of ' + cards.length + ' icons match.';
+            count.textContent = query === ''
+                ? 'All ' + results.length + ' icons.'
+                : results.length + ' of ' + ids.length + ' icons match.';
+            showPage();
         }
 
         var request = new XMLHttpRequest();
@@ -129,23 +167,17 @@ if (($csv = @fopen($dir . 'ik0ns.csv', 'r')) !== false) {
                 if (i === 0 && row[0] === 'id') { return; }
                 var id = (row[0] || '').trim();
                 if (!id) { return; }
-                var text = row[1] || '', tags = row[2] || '', colors = row[3] || '';
-                words[id] = split([text, tags.replace(/;/g, ' '), colors.replace(/;/g, ' ')].join(' '));
-                var card = cardById[id];
-                if (card) {
-                    var tip = ['Icon ' + id];
-                    if (text) { tip.push('"' + text + '"'); }
-                    if (tags) { tip.push(tags.split(';').join(', ')); }
-                    if (colors) { tip.push(colors.split(';').join(', ')); }
-                    card.title = tip.join('\n');
-                    card.querySelector('img').alt = text || tags.split(';')[0] || 'Icon';
-                }
+                info[id] = { text: row[1] || '', tags: row[2] || '', colors: row[3] || '' };
+                words[id] = split([info[id].text, info[id].tags.replace(/;/g, ' '), info[id].colors.replace(/;/g, ' ')].join(' '));
             });
-            filter();
+            update();
         };
         request.send();
-        input.addEventListener('input', filter);
-        showNsfw.addEventListener('change', filter);
+
+        input.addEventListener('input', function () { browsing = false; update(); });
+        showNsfw.addEventListener('change', update);
+        document.getElementById('all').addEventListener('click', function () { input.value = ''; browsing = true; update(); });
+        more.addEventListener('click', showPage);
     })();
     </script>
 
